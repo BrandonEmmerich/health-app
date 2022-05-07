@@ -90,7 +90,7 @@ body_composition_data = (
     )
 )
 
-body_comp = alt.Chart(body_composition_data).mark_bar(size=20).encode(
+body_comp = alt.Chart(body_composition_data).mark_bar(size=9).encode(
     alt.X(
         'dt_mon',
         axis=alt.Axis(title='')
