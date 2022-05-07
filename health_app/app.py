@@ -4,7 +4,12 @@ import streamlit as st
 
 import get_withings
 
-df = get_withings.get_clean_withings_data()
+@st.cache(ttl=3600)
+def fetch_and_clean_data():
+    df = get_withings.get_clean_withings_data()
+    return df
+
+df = fetch_and_clean_data()
 
 average_body_fat = round(df.tail(1)['average_body_fat'].tolist()[0],1)
 average_weight = round(df.tail(1)['average_weight'].tolist()[0],1)
@@ -16,8 +21,6 @@ f"""
 ### Weight: {average_weight} lbs
 """
 )
-
-
 
 weight = (
     alt
