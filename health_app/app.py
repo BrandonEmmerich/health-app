@@ -3,16 +3,23 @@ import pandas as pd
 import streamlit as st
 
 import get_withings
+import get_whoop
 
 @st.cache(ttl=3600)
-def fetch_and_clean_data():
-    df = get_withings.get_clean_withings_data()
-    return df
+def fetch_and_clean_withings_data():
+    withings = get_withings.get_clean_withings_data()
+    return withings
 
-df = fetch_and_clean_data()
+def fetch_and_clean_whoop_data():
+    whoop = get_whoop.get_clean_whoop_data()
+    return whoop
 
-average_body_fat = round(df.tail(1)['average_body_fat'].tolist()[0],1)
-average_weight = round(df.tail(1)['average_weight'].tolist()[0],1)
+whoop = fetch_and_clean_whoop_data()
+withings = fetch_and_clean_withings_data()
+
+average_body_fat = round(withings.tail(1)['average_body_fat'].tolist()[0],1)
+average_weight = round(withings.tail(1)['average_weight'].tolist()[0],1)
+resting_heart_rate = round(whoop.tail(1)['average_rhr'].tolist()[0],1)
 
 st.write(
 f"""
@@ -24,7 +31,7 @@ f"""
 
 weight = (
     alt
-    .Chart(df)
+    .Chart(withings)
     .mark_line()
     .encode(
         alt.Y(
@@ -43,7 +50,7 @@ weight = (
 
 body_fat = (
     alt
-    .Chart(df)
+    .Chart(withings)
     .mark_line()
     .encode(
         alt.Y(
@@ -60,6 +67,25 @@ body_fat = (
     .interactive()
 )
 
+heart_rate = (
+    alt
+    .Chart(whoop)
+    .mark_line()
+    .encode(
+        alt.Y(
+            'average_rhr',
+            scale=alt.Scale(zero=False),
+            axis=alt.Axis(title='Average Resting Heart Rate\n(Beats Per Minute)')
+        ),
+        alt.X(
+            'dt',
+            axis=alt.Axis(title='')
+        ),
+        tooltip=['dt', 'average_rhr']
+    )
+    .interactive()
+)
+
 st.altair_chart(weight, use_container_width=True)
 
 st.write(
@@ -71,7 +97,7 @@ f"""
 st.altair_chart(body_fat, use_container_width=True)
 
 body_composition_data = (
-    df
+    withings
      .query('end_of_month == 1')
     [['dt_mon', 'average_body_fat', 'average_weight']]
     .assign(
@@ -110,6 +136,14 @@ f"""
 )
 
 st.altair_chart(body_comp, use_container_width=True)
+
+st.write(
+f"""
+### Resting Heart Rate: {resting_heart_rate} bpm
+"""
+)
+
+st.altair_chart(heart_rate, use_container_width=True)
 
 st.write(
 """
