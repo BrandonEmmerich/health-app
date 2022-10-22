@@ -14,12 +14,12 @@ def fetch_and_clean_whoop_data():
     whoop = get_whoop.get_clean_whoop_data()
     return whoop
 
-whoop = fetch_and_clean_whoop_data()
+# whoop = fetch_and_clean_whoop_data()
 withings = fetch_and_clean_withings_data()
 
 average_body_fat = round(withings.tail(1)['average_body_fat'].tolist()[0],1)
 average_weight = round(withings.tail(1)['average_weight'].tolist()[0],1)
-resting_heart_rate = round(whoop.tail(1)['average_rhr'].tolist()[0],1)
+# resting_heart_rate = round(whoop.tail(1)['average_rhr'].tolist()[0],1)
 
 st.write(
 f"""
@@ -67,24 +67,24 @@ body_fat = (
     .interactive()
 )
 
-heart_rate = (
-    alt
-    .Chart(whoop)
-    .mark_line()
-    .encode(
-        alt.Y(
-            'average_rhr',
-            scale=alt.Scale(zero=False),
-            axis=alt.Axis(title='Average Resting Heart Rate\n(Beats Per Minute)')
-        ),
-        alt.X(
-            'dt',
-            axis=alt.Axis(title='')
-        ),
-        tooltip=['dt', 'average_rhr']
-    )
-    .interactive()
-)
+# heart_rate = (
+#     alt
+#     .Chart(whoop)
+#     .mark_line()
+#     .encode(
+#         alt.Y(
+#             'average_rhr',
+#             scale=alt.Scale(zero=False),
+#             axis=alt.Axis(title='Average Resting Heart Rate\n(Beats Per Minute)')
+#         ),
+#         alt.X(
+#             'dt',
+#             axis=alt.Axis(title='')
+#         ),
+#         tooltip=['dt', 'average_rhr']
+#     )
+#     .interactive()
+# )
 
 st.altair_chart(weight, use_container_width=True)
 
@@ -137,13 +137,13 @@ f"""
 
 st.altair_chart(body_comp, use_container_width=True)
 
-st.write(
-f"""
-### Resting Heart Rate: {resting_heart_rate} bpm
-"""
-)
-
-st.altair_chart(heart_rate, use_container_width=True)
+# st.write(
+# f"""
+# ### Resting Heart Rate: {resting_heart_rate} bpm
+# """
+# )
+#
+# st.altair_chart(heart_rate, use_container_width=True)
 
 st.write(
 """
